@@ -39,15 +39,13 @@ use rustc::plugin::Registry;
 struct FnHeader {
   name: String,
   inputs: Vec<String>,
-  output: Option<String>
+  output: String
 }
 
 impl FnHeader {
   fn new(name: String, fn_decl: &FnDecl) -> FnHeader {
     let inputs = fn_decl.inputs.iter()
     .map(|arg| FnHeader::read_type(&arg.ty.node.clone()))
-    .filter(|ty| ty.is_some())
-    .map( |ty| ty.unwrap())
     .collect::<Vec<String>>();
 
     let output = FnHeader::read_type(&fn_decl.output.node);
@@ -57,10 +55,10 @@ impl FnHeader {
 
   // this should return a string version of the supplied type,
   // like: "uint" or "collections::string::String"
-  fn read_type(t: &Ty_) -> Option<String> {
+  fn read_type(t: &Ty_) -> String {
     match (*t).clone() {
-      TyNil => None,
-      TyPath(p,_,_) => Some({
+      TyNil => String::from_str("nil"),
+      TyPath(p,_,_) => {
         let mut state = true;
 
         p.segments.iter()
@@ -74,7 +72,7 @@ impl FnHeader {
           }
           a
         })
-      }),
+      },
       _ => panic!("cannot handle type: {}", t)
 
     }
@@ -171,11 +169,7 @@ impl LintPass for FnHeaderGrep {
     match fn_kind {
       FkItemFn(ref ident,_,_,_) => {
         let name = get_name_from_ident(ident);
-
-        //skip main
-        if name.as_slice() != "main" {
-          self.fn_headers.push(FnHeader::new(name, fn_decl));
-        }
+        self.fn_headers.push(FnHeader::new(name, fn_decl));
       },
       _      => {}
     }

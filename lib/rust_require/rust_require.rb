@@ -26,18 +26,22 @@ module Rust
 
     # TODO: insert check for unmodified input here
 
-    # Use Rustc to create wrappers and compile the file
+    # location of info.json
+    info_file_path = "#{subdir}/info.json"
+
+    # Use Rustc to create wrappers and compile the file + wrappers
     rustc = Rustc.new(file_path)
-    rustc.subdir      = subdir
-    rustc.info_file   = "#{subdir}/info.json"
-    rustc.output_path = "#{subdir}/lib#{File.basename(file_path, '.rs')}.so"
-    rustc.create_wrapper
+    rustc.subdir         = subdir
+    rustc.info_file_path = info_file_path
+    rustc.output_path    = "#{subdir}/lib#{File.basename(file_path, '.rs')}.so"
+
+    info_file = rustc.create_wrapper
     rustc.compile
 
     # Use RubyWrapperGenerator to make items from the compiled
     # lib available in mod
     gen = RubyWrapperGenerator.new
-    gen.info_file = rustc.info_file
+    gen.info_file = info_file
     gen.rust_lib  = rustc.output_path
     gen.include_lib(mod)
 
