@@ -4,9 +4,6 @@ module Rust
   module Types
     # returns type instance for rust_type
     def self.find_type(rust_type)
-      # deal with nil
-      rust_type = 'nil' if rust_type.nil?
-
       # find types in module constants
       type = constants
        .map { |c| const_get(c) }
