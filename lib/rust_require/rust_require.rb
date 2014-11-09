@@ -53,7 +53,7 @@ module Rust
   # This checks if file_name is a valid .rs file
   def self.check_file(file_path)
     raise ArgumentError, 'input must be a String object' unless file_path.is_a? String
-    raise LoadError, 'file #{file_name} not found'       unless File.exists? file_path
+    raise LoadError, "file #{file_name} not found"       unless File.exists? file_path
     raise NameError, 'input file must be a .rs file'     unless file_path.end_with? '.rs'
   end
 
