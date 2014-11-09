@@ -6,7 +6,7 @@ describe Rust do
     `rm -rf specs/.rust_require`
   end
 
-  describe "#rust_require" do
+  describe "#rust_require(primitives)" do
     it "should support primitive rust types" do
       class Test
         rust_require './specs/primitives.rs'
