@@ -2,7 +2,7 @@ module Rust
   # A Wrapper to use rustc
   class Rustc
     # Path of rustc lint plugin to gather information about .rs files
-    LIBRUST_GREP_LINTS = File.absolute_path('ext/rust_grep_lints/lib/librust_grep_lints.so')
+    SOURCE_ANALYZER = File.absolute_path('ext/rust_grep_lints/lib/libsource_analyzer.so')
 
     # default rustc command
     RUSTC_CMD = 'rustc --crate-type dylib -A dead_code'
@@ -53,14 +53,14 @@ module Rust
     def analyze_tempfile
       File.open(@tempfile, 'w+') do |f|
         # injection of the librust_grep_lints plugin
-        f << "#![feature(phase)]\n#[phase(plugin)]\nextern crate rust_grep_lints;\n"
+        f << "#![feature(phase)]\n#[phase(plugin)]\nextern crate source_analyzer;\n"
 
         # add the actual file content
         File.open(@input_path, "r") { |input| f << input.read }
       end
 
       # use the lint to just parse the file (no output)
-      puts `RUST_REQUIRE_FILE=#{@info_file_path} #{RUSTC_CMD} --no-trans -L #{File.dirname(LIBRUST_GREP_LINTS)} #{@tempfile}`
+      puts `RUST_REQUIRE_FILE=#{@info_file_path} #{RUSTC_CMD} --no-trans -L #{File.dirname(SOURCE_ANALYZER)} #{@tempfile}`
 
       # remove the injected lint plugin again
       File.open(@tempfile, 'w+') do |f|
