@@ -6,10 +6,10 @@ module Rust
     def self.find_type(rust_type)
       # find types in module constants
       type = constants
-       .map { |c| const_get(c) }
+       .map     { |c| const_get(c) }
        .keep_if { |c| c.is_a?(Class) && c.ancestors.include?(Type) && c != Type} #just Type subclass objects, excluding Type itself
-       .map { |c| c.new } # instances of the Type classes
-       .find { |c| c.rust_type == rust_type }
+       .map     { |c| c.new } # instances of the Type classes
+       .find    { |c| c.rust_type == rust_type }
 
       if type
         type

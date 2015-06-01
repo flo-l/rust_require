@@ -2,7 +2,7 @@ module Rust
   # A Wrapper to use rustc
   class Rustc
     # Path of rustc lint plugin to gather information about .rs files
-    SOURCE_ANALYZER = File.absolute_path('ext/rust_grep_lints/lib/libsource_analyzer.so')
+    SOURCE_ANALYZER = File.absolute_path('ext/source_analyzer/lib/libsource_analyzer.so')
 
     # default rustc command
     RUSTC_CMD = 'rustc --crate-type dylib -A dead_code'
@@ -13,7 +13,7 @@ module Rust
     # @info_file_path is the info.json file containing infos about the rust lib
     attr_accessor :info_file_path
 
-    # @subdir is the dir where various files can be stored
+    # @subdir is a tempdir
     attr_writer :subdir
 
     # input is a String object containing the absolute path to an input file
@@ -24,8 +24,8 @@ module Rust
     # creates a c-wrapper for file at @input_path
     # returns info.json, parsed with JSON
     def create_wrapper
-      # @input_path with wrappers
-      @tempfile = "#{@subdir}/#{File.basename(@input_path)}"
+      # @input_path with wrappers added
+      @tempfile = "#{File.dirname(@input_path)}/#{File.basename(@input_path, ".*")}_wrapper.rs"
 
       analyze_tempfile
 
@@ -44,7 +44,8 @@ module Rust
 
     # Compiles file @input_path with rustc
     def compile
-      puts `#{RUSTC_CMD} #{@tempfile} -o #{@output_path}`
+      puts `#{RUSTC_CMD} -L #{File.dirname(@input_path)} #{@tempfile} -o #{@output_path}`
+      `rm #{@tempfile}`
     end
 
     private
@@ -53,14 +54,14 @@ module Rust
     def analyze_tempfile
       File.open(@tempfile, 'w+') do |f|
         # injection of the librust_grep_lints plugin
-        f << "#![feature(phase)]\n#[phase(plugin)]\nextern crate source_analyzer;\n"
+        f << "#![feature(plugin)]\n#![plugin(source_analyzer)]\n"
 
         # add the actual file content
         File.open(@input_path, "r") { |input| f << input.read }
       end
 
       # use the lint to just parse the file (no output)
-      puts `RUST_REQUIRE_FILE=#{@info_file_path} #{RUSTC_CMD} --no-trans -L #{File.dirname(SOURCE_ANALYZER)} #{@tempfile}`
+      puts `RUST_REQUIRE_FILE=#{@info_file_path} #{RUSTC_CMD} -Z no-trans -L #{File.dirname(@input_path)} -L #{File.dirname(SOURCE_ANALYZER)} #{@tempfile}`
 
       # remove the injected lint plugin again
       File.open(@tempfile, 'w+') do |f|

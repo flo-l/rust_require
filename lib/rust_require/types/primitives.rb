@@ -12,29 +12,34 @@ module Rust
       end
     end
 
-    # metaprogramming magic *-*
-    %w[bool int uint].each do |x|
-      klass = Class.new(Type) do
-        @rust_type = x
-      end
+    class Bool < Type
+        @rust_type = "bool"
+    end
 
-      const_set(x.capitalize, klass)
+    class Isize < Type
+        @rust_type = "isize"
+        def ffi_type; :int; end
+    end
+
+    class Usize < Type
+        @rust_type = "usize"
+        def ffi_type; :uint; end
     end
 
     # more metaprogramming!!
     %w[8 16 32 64].each do |x|
-      uint = Class.new(Type) do
+      usize = Class.new(Type) do
         @rust_type = "u#{x}"
         def ffi_type; rust_type.sub('u', 'uint').to_sym; end
       end
 
-      int = Class.new(Type) do
+      isize = Class.new(Type) do
         @rust_type = "i#{x}"
-        def ffi_type; rust_type.sub('i', 'int').to_sym.to_sym; end
+        def ffi_type; rust_type.sub('i', 'int').to_sym; end
       end
 
-      const_set('U'+x, uint)
-      const_set('I'+x, int)
+      const_set('U'+x, usize)
+      const_set('I'+x, isize)
     end
 
     class F32 < Type

@@ -3,8 +3,8 @@
 fn test_nil() {}
 fn test_bool(b: bool) -> bool { b }
 
-fn test_int(i: int) -> int { i }
-fn test_uint(u: uint) -> uint { u }
+fn test_int(i: isize) -> isize { i }
+fn test_uint(u: usize) -> usize { u }
 
 
 fn test_i8(i: i8) -> i8 { i }
