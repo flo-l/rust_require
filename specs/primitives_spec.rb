@@ -13,6 +13,8 @@ describe Rust do
       end
 
       t = Test.new
+      expect { t.should_not_be_visible }.to raise_error NoMethodError
+
       expect(t.test_nil).to eq nil
       expect(t.test_bool true).to eq true
 

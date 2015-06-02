@@ -3,6 +3,8 @@ macro_rules! test {
     ($i:ident, $t:ty) => (pub fn $i(x: $t) -> $t { x });
 }
 
+fn should_not_be_visible() {}
+
 pub fn test_nil() {}
 test!(test_bool, bool);
 
