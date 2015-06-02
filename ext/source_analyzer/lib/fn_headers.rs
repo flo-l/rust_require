@@ -10,58 +10,57 @@ use std::fmt::{
 
 // syntax elements
 use syntax::ast::{
-  FnDecl, Ty_, Ident, TyPath, TyTup, FunctionRetTy};
+    FnDecl, Ty_, Ident, TyPath, TyTup, FunctionRetTy};
 
 // represents a function header:
 // everything one needs to create a wrapper function
 pub struct FnHeader {
-  pub name: String,
-  inputs: Vec<String>,
-  output: String,
+    pub name: String,
+    inputs: Vec<String>,
+    output: String,
 }
 
 impl FnHeader {
-  pub fn new(ident: &Ident, fn_decl: &FnDecl) -> FnHeader {
-    let name = super::get_name_from_ident(ident);
+    pub fn new(ident: &Ident, fn_decl: &FnDecl) -> FnHeader {
+        let name = super::get_name_from_ident(ident);
 
-    let inputs = fn_decl.inputs.iter()
-    .map(|arg| FnHeader::read_type(&arg.ty.node))
-    .collect::<Vec<String>>();
+        let inputs = fn_decl.inputs.iter()
+        .map(|arg| FnHeader::read_type(&arg.ty.node))
+        .collect::<Vec<String>>();
 
-    let output = match &fn_decl.output {
-        &FunctionRetTy::NoReturn(_) => unimplemented!(),
-        &FunctionRetTy::DefaultReturn(_) => FnHeader::read_type(&Ty_::TyTup(vec![])),
-        &FunctionRetTy::Return(ref ret) => FnHeader::read_type(&ret.node),
-    };
+        let output = match &fn_decl.output {
+            &FunctionRetTy::NoReturn(_) => unimplemented!(),
+            &FunctionRetTy::DefaultReturn(_) => FnHeader::read_type(&Ty_::TyTup(vec![])),
+            &FunctionRetTy::Return(ref ret) => FnHeader::read_type(&ret.node),
+        };
 
-    FnHeader { name: name, inputs: inputs, output: output }
-  }
-
-  // this should return a string version of the supplied type,
-  // like: "uint" or "collections::string::String"
-  fn read_type(t: &Ty_) -> String {
-    match t {
-      &TyTup(ref v) if v.is_empty() => String::from_str("nil"),
-      &TyPath(_,ref p) => {
-        let mut state = true;
-
-        p.segments
-        .iter()
-        .map(|seg| super::get_name_from_ident(&seg.identifier))
-        .fold(String::new(), |mut a, b| {
-          if state {
-            state = false;
-            a.push_str(&b);
-          } else {
-            a.push_str(&format!("::{}", b));
-          }
-          a
-        })
-      },
-      _ => panic!("cannot handle type: {:?}", t)
-
+        FnHeader { name: name, inputs: inputs, output: output }
     }
-  }
+
+    // this should return a string version of the supplied type,
+    // like: "uint" or "collections::string::String"
+    fn read_type(t: &Ty_) -> String {
+        match t {
+            &TyTup(ref v) if v.is_empty() => String::from_str("nil"),
+            &TyPath(_,ref p) => {
+                let mut state = true;
+
+                p.segments
+                .iter()
+                .map(|seg| super::get_name_from_ident(&seg.identifier))
+                .fold(String::new(), |mut a, b| {
+                    if state {
+                        state = false;
+                        a.push_str(&b);
+                    } else {
+                        a.push_str(&format!("::{}", b));
+                    }
+                    a
+                })
+            },
+            _ => panic!("cannot handle type: {:?}", t),
+        }
+    }
 }
 
 
@@ -79,7 +78,7 @@ impl ToJson for FnHeader {
 
 // Prints the JSON representation of FnHeader
 impl Display for FnHeader {
-  fn fmt(&self, f: &mut Formatter) -> Result {
-    write!(f, "{}", self.to_json())
-  }
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "{}", self.to_json())
+    }
 }
