@@ -23,7 +23,7 @@ use std::io::Write;
 
 // syntax elements
 use syntax::ast::{
-  Block, FnDecl, Ident, NodeId};
+  Block, FnDecl, Ident, NodeId, Visibility};
 use syntax::codemap::Span;
 use syntax::parse::token;
 use syntax::visit::{
@@ -109,7 +109,8 @@ impl LintPass for SourceAnalyzer {
 
   fn check_fn(&mut self, _: &Context, fn_kind: FnKind, fn_decl: &FnDecl, _: &Block, _: Span, _: NodeId) {
     match fn_kind {
-      FkItemFn(ref ident,_,_,_,_,_) => self.fn_headers.push(fn_headers::FnHeader::new(ident, fn_decl)),
+      FkItemFn(ref ident,_,_,_,_,Visibility::Public)
+      => self.fn_headers.push(fn_headers::FnHeader::new(ident, fn_decl)),
       _ => (),
     }
   }
