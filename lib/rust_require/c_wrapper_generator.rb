@@ -12,8 +12,25 @@ module Rust
 
     # Generates a Rust-to-C code wrapper as rust code (String)
     def generate_wrapper
-      @json['fn_headers'].map do |name, fn|
-        WrapperFn.new(name, fn['inputs'], fn['output']).to_s
+      generate_mod_wrapper(@json, '')
+    end
+
+    private
+
+    # Generates wrapper fns for fn_headers and submodules in mod (String)
+    # submod_string is mods path eg. "mod::submod::"
+    def generate_mod_wrapper(mod,submod_string)
+      w = mod['submodules'].map do |x|
+        generate_mod_wrapper(x,submod_string+x['name']+'::')
+      end.join("\n")
+
+      w << generate_fns(mod['fn_headers'], submod_string)
+    end
+
+      # Generates wrapper fns for fn_headers (String)
+    def generate_fns(fn_headers, submod_string)
+      fn_headers.map do |fn|
+        WrapperFn.new(submod_string + fn['name'], fn['inputs'], fn['output']).to_s
       end.join("\n")
     end
   end
@@ -47,7 +64,7 @@ module Rust
 
         <<-END
           #[no_mangle]
-          pub extern "C" fn _#{@original_name}_wrapper(#{input_str}) -> #{c_output} {
+          pub extern "C" fn _#{@original_name.gsub('::','_')}_wrapper(#{input_str}) -> #{c_output} {
             let output = #{@original_name}(#{input_conversions});
             #{output_conversion}
           }

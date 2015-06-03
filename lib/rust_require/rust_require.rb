@@ -21,8 +21,20 @@ module Rust
 
     register_file [file_path,mod]
 
+    # compute rust crate name 
+    # file name without .rs extension
+    crate_name = File.basename(file_path, '.rs')
+
+    # path of dir containing file_name
+    dir_name = File.dirname(file_path)
+
+    # in case of ../blabla/mod.rs
+    if crate_name == 'mod'
+      crate_name = dir_name.split("/").last
+    end
+
     # create .rust_require/#{file_name} subfolder
-    subdir = create_subfolder(file_path)
+    subdir = create_subfolder(crate_name, dir_name)
 
     # TODO: insert check for unmodified input here
 
@@ -67,19 +79,13 @@ module Rust
     ALREADY_REQUIRED[comb] = true
   end
 
-  # This creates a subfolder '.rust_require/#{file_name}'
+  # This creates a subfolder '.rust_require/#{crate_name}' in dir_name
   # to store intermediate files to cache compilation results
-  def self.create_subfolder(file_path)
-    # file name without .rs extension
-    file_name = File.basename(file_path, '.rs')
-
-    # path of dir containing file_name
-    dir_name = File.dirname(file_path)
-
+  def self.create_subfolder(crate_name, dir_name)
     # path of the dirs to be created
     new_dir_paths = []
     new_dir_paths << "#{dir_name}/.rust_require"
-    new_dir_paths << "#{dir_name}/.rust_require/#{file_name}"
+    new_dir_paths << "#{dir_name}/.rust_require/#{crate_name}"
 
     new_dir_paths.each do |path|
       unless Dir.exists? path

@@ -69,10 +69,11 @@ impl FnHeader {
 // =>  {"test1":{"inputs":["int","String"],"output":"nil"}}
 impl ToJson for FnHeader {
     fn to_json(&self) -> json::Json {
-        let mut fn_obj = BTreeMap::new();
-        fn_obj.insert("inputs".to_string(), self.inputs.to_json());
-        fn_obj.insert("output".to_string(), self.output.to_json());
-        fn_obj.to_json()
+        let mut j = BTreeMap::new();
+        j.insert("name".to_string(), self.name.to_json());
+        j.insert("inputs".to_string(), self.inputs.to_json());
+        j.insert("output".to_string(), self.output.to_json());
+        j.to_json()
     }
 }
 

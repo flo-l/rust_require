@@ -9,12 +9,7 @@ extern crate collections;
 #[macro_use]
 extern crate rustc;
 
-//BTreeMap
-use collections::BTreeMap;
-
-//JSON support
-use serialize::json::{
-    self, ToJson, Json};
+use serialize::json::ToJson;
 
 // some io
 use std::path::Path;
@@ -23,11 +18,8 @@ use std::io::Write;
 
 // syntax elements
 use syntax::ast::{
-  Block, FnDecl, Ident, NodeId, Visibility};
-use syntax::codemap::Span;
+  Crate, Ident};
 use syntax::parse::token;
-use syntax::visit::{
-    FnKind, FkItemFn};
 
 // lint things
 use rustc::lint::{
@@ -36,7 +28,9 @@ use rustc::plugin::Registry;
 
 //Load mods
 mod fn_headers;
-//mod modules;
+mod modules;
+
+use modules::Module;
 
 // NICE LITTLE HELPERS
 ///////////////////////////////////////////////////////////////////////////
@@ -54,7 +48,7 @@ declare_lint!(SOURCE_ANALYZER, Allow, "Analyze rust source file and produce json
 
 struct SourceAnalyzer {
     output: File,
-    fn_headers: Vec<fn_headers::FnHeader>
+    top_level_mod: Option<Module>,
 }
 
 impl SourceAnalyzer {
@@ -72,29 +66,14 @@ impl SourceAnalyzer {
             Err(e) => panic!("file error: {}", e)
         };
 
-        SourceAnalyzer { output: file, fn_headers: vec![] }
-    }
-}
-
-// JSON represantation of self
-impl ToJson for SourceAnalyzer {
-    fn to_json(&self) -> json::Json {
-        let mut base_obj   = BTreeMap::new();
-        let mut fn_headers = BTreeMap::new();
-
-        for fn_header in self.fn_headers.iter() {
-            fn_headers.insert(fn_header.name.clone(), fn_header.to_json());
-        }
-
-        base_obj.insert("fn_headers".to_string(), fn_headers.to_json());
-        base_obj.to_json()
+        SourceAnalyzer { output: file, top_level_mod: None }
     }
 }
 
 // Abuse Drop to write the output file
 impl Drop for SourceAnalyzer {
     fn drop(&mut self) {
-        let json = self.to_json();
+        let json = self.top_level_mod.as_ref().unwrap().to_json();
         match write!(self.output, "{}", json) {
             Err(e) => panic!("file error: {}", e),
             Ok(_)  => ()
@@ -107,12 +86,8 @@ impl LintPass for SourceAnalyzer {
         lint_array!(SOURCE_ANALYZER)
     }
 
-    fn check_fn(&mut self, _: &Context, fn_kind: FnKind, fn_decl: &FnDecl, _: &Block, _: Span, _: NodeId) {
-        match fn_kind {
-            FkItemFn(ref ident,_,_,_,_,Visibility::Public)
-            => self.fn_headers.push(fn_headers::FnHeader::new(ident, fn_decl)),
-            _ => (),
-        }
+    fn check_crate(&mut self, _: &Context, c: &Crate) {
+        self.top_level_mod = Some(Module::new("top_level".to_string(), &c.module));
     }
 }
 
