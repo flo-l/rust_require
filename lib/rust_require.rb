@@ -1,3 +1,6 @@
+# Extern libs
+require 'active_support/core_ext/string/inflections'
+
 # Libs
 require_relative 'rust_require/rust_require.rb'
 require_relative 'rust_require/rustc.rb'
