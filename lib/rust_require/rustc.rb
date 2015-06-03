@@ -45,6 +45,7 @@ module Rust
     # Compiles file @input_path with rustc
     def compile
       puts `#{RUSTC_CMD} -L #{File.dirname(@input_path)} #{@tempfile} -o #{@output_path}`
+      raise "rust compiler error" if $? != 0
       `rm #{@tempfile}`
     end
 
@@ -62,6 +63,7 @@ module Rust
 
       # use the lint to just parse the file (no output)
       puts `RUST_REQUIRE_FILE=#{@info_file_path} #{RUSTC_CMD} -Z no-trans -L #{File.dirname(@input_path)} -L #{File.dirname(SOURCE_ANALYZER)} #{@tempfile}`
+      raise "rust compiler error" if $? != 0
 
       # remove the injected lint plugin again
       File.open(@tempfile, 'w+') do |f|
