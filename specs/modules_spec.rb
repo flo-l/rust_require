@@ -16,6 +16,7 @@ describe Rust do
       expect(Test.constants).to include(:SubModule)
       expect(Test.constants).to include(:ExternalFileModule)
       expect(Test.constants).to include(:ExternalDirModule)
+      expect(Test.constants).to_not include(:InvisibleModule)
       expect(Test::SubModule.constants).to include(:SubSubModule)
 
       expect(Test.new.test).to eq nil
