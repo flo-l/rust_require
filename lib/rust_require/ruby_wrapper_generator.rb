@@ -1,5 +1,3 @@
-require 'ffi'
-
 module Rust
   # This class generates Ruby wrappers for a dylib
   # with information from an info.json file and

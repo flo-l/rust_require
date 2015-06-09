@@ -1,4 +1,5 @@
 # Extern libs
+require 'ffi'
 require 'active_support/core_ext/string/inflections'
 
 # Libs
@@ -10,6 +11,7 @@ require_relative 'rust_require/ruby_wrapper_generator.rb'
 
 # Types
 require_relative 'rust_require/types/primitives.rb'
+require_relative 'rust_require/types/string.rb'
 
 class Module
   def rust_require(file)

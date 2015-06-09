@@ -10,7 +10,7 @@ use std::fmt::{
 
 // syntax elements
 use syntax::ast::{
-    FnDecl, Ty_, Ident, TyPath, TyTup, FunctionRetTy};
+    FnDecl, Ty_, Ident, TyPath, TyTup, FunctionRetTy, Mutability, TyRptr};
 
 // represents a function header:
 // everything one needs to create a wrapper function
@@ -58,7 +58,25 @@ impl FnHeader {
                     a
                 })
             },
-            _ => panic!("cannot handle type: {:?}", t),
+            &TyRptr(lifetime,ref ty) => {
+                let mut s: String = "&".into();
+
+                if lifetime.is_some() {
+                    panic!("references with lifetimes are not yet supported!");
+                }
+
+                match ty.mutbl {
+                    Mutability::MutMutable   => s.push_str("mut "),
+                    Mutability::MutImmutable => s.push_str(" "),
+                }
+
+                s.push_str(&FnHeader::read_type(&ty.ty.node));
+                s
+            }
+            t => {
+                println!("cannot handle type: {:?}", t);
+                unimplemented!();
+            }
         }
     }
 }

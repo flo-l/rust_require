@@ -1,4 +1,21 @@
 module Rust
+  # a rust fat pointer
+  class Slice < FFI::Struct
+    layout :ptr, :pointer,
+           :len, :uint
+
+    def self.from(start, len)
+      s = new
+      s[:ptr] = start
+      s[:len] = len
+      s
+    end
+
+    def unpack
+      [self[:ptr], self[:len]]
+    end
+  end
+
   # Types are used to implement support
   # for rust types in rust_require
   module Types
@@ -9,9 +26,10 @@ module Rust
        .map     { |c| const_get(c) }
        .keep_if { |c| c.is_a?(Class) && c.ancestors.include?(Type) && c != Type} #just Type subclass objects, excluding Type itself
        .map     { |c| c.new } # instances of the Type classes
-       .find    { |c| c.rust_type == rust_type }
+       .find    { |c| c.rust_type_regex =~ rust_type }
 
       if type
+        type.rust_type = rust_type
         type
       else
         raise NotImplementedError, "type #{rust_type} is not implemented!"
@@ -20,7 +38,7 @@ module Rust
 
     # The base class for Types with simple defaults
     class Type
-      # accessor for @rust type of Type class
+      # accessor for @rust_type of Type class
       def self.rust_type; @rust_type; end
 
       # set @rust_type from class variable @rust_type
@@ -33,6 +51,12 @@ module Rust
       def rust_type
         raise NotImplementedError, "This is a bug." if @rust_type.nil?
         @rust_type
+      end
+
+      attr_writer :rust_type
+
+      def rust_type_regex
+        Regexp.new @rust_type
       end
 
       def c_type; rust_type; end

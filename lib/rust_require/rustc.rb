@@ -34,7 +34,18 @@ module Rust
 
       gen = CWrapperGenerator.new(info_file)
 
-      File.open(@tempfile, "a") do |f|
+      File.open(@tempfile, "w+") do |f|
+        # add necessary extern crate definitions
+        f << <<-SRC
+            #![allow(unused_features)]
+            #![feature(libc,cstr_to_str)]
+            extern crate libc;
+        SRC
+
+        # add the actual file content
+        File.open(@input_path, "r") { |input| f << input.read }
+
+        # add wrappers
         f << gen.generate_wrapper
       end
 
