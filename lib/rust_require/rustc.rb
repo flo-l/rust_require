@@ -35,11 +35,9 @@ module Rust
       gen = CWrapperGenerator.new(info_file)
 
       File.open(@tempfile, "w+") do |f|
-        # add necessary extern crate definitions
+        # add necessary extern crate definitions #FIXME: if this proves to be unnecessary remove it
         f << <<-SRC
-            #![allow(unused_features)]
-            #![feature(libc,cstr_to_str)]
-            extern crate libc;
+
         SRC
 
         # add the actual file content
