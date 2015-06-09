@@ -1,3 +1,10 @@
+### Overview
+This gem imports a rust file similar to how ```require``` imports a ruby file. It creates wrappers for all rust functions marked ```pub```, including type conversions for more complex things like strings.
+
+```rust_require``` makes ruby to rust interop completely automatic and convenient (also fast and memory safe).
+
+Internally it makes heavy use of the awesome [```ffi```](https://github.com/ffi/ffi/) gem and should as a result work with all three major ruby implementations.
+
 ### Install
     gem install rust_require
 
@@ -21,6 +28,7 @@
 
 # Features
 
+- Supports rust macros
 - Supports free functions
 - Imports the whole rust module tree
 
