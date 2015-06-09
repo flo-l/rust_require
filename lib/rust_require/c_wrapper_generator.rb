@@ -55,7 +55,7 @@ module Rust
         input_types = @inputs.map  { |t| Rust::Types.find_type(t) }
         c_inputs = input_types.map { |t| t.c_input_type } #C input types ([String])
         input_str = c_inputs.map.with_index { |t,i| "c#{i}: #{t}" }.join(',') #fn foo_wrapper(input_str) ...
-        input_conversions = input_types.map.with_index { |t,i| t.c_input_conversion("c#{i}") }.join("\n") #code used to convert input types to c types
+        input_conversions = input_types.map.with_index { |t,i| t.c_input_conversion("c#{i}") }.join(",") #code used to convert input types to c types
 
         # convert output
         output_type = Rust::Types.find_type(@output)
