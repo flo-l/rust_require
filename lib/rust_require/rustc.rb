@@ -2,7 +2,7 @@ module Rust
   # A Wrapper to use rustc
   class Rustc
     # Path of rustc lint plugin to gather information about .rs files
-    SOURCE_ANALYZER = File.absolute_path('ext/source_analyzer/lib/libsource_analyzer.so')
+    SOURCE_ANALYZER = Gem::Specification.find_by_name('rust_require').full_gem_path + '/ext/source_analyzer/lib/libsource_analyzer.so'
 
     # default rustc command
     RUSTC_CMD = 'rustc --crate-type dylib -A dead_code'

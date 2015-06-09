@@ -14,5 +14,15 @@ end
 desc "Compiles the rustc plugin and then runs tests"
 task :test_complete => [:compile_rustc_plugin, :test]
 
-desc "Compile the rustc plugin by default"
-task :default => :compile_rustc_plugin
+desc "Builds the rust_require gem"
+task :build do
+  `gem build rust_require.gemspec` 
+end
+
+desc "Build the rust_require gem by default"
+task :default => :build_gem
+
+desc "Build and install the gem"
+task :install => :build do
+  `gem install rust_require*.gem`
+end
