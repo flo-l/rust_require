@@ -21,5 +21,8 @@ test!(test_u16, u16);
 test!(test_u32, u32);
 test!(test_u64, u64);
 
+pub fn f32_max() -> f32 { std::f32::MAX }
+pub fn f32_min() -> f32 { std::f32::MIN }
+
 test!(test_f32, f32);
 test!(test_f64, f64);
