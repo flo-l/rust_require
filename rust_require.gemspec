@@ -1,5 +1,5 @@
 module Rust
-  require_relative 'lib/rust_require/version.rb'
+  eval File.read('lib/rust_require/version.rb')
 end
 
 Gem::Specification.new do |s|
