@@ -1,3 +1,6 @@
+# rust_require
+[![Gem Version](https://badge.fury.io/rb/rust_require.svg)](http://badge.fury.io/rb/rust_require)
+
 ### Overview
 This gem imports a rust file similar to how ```require``` imports a ruby file. It creates wrappers for all rust functions marked ```pub```, including type conversions for more complex things like strings.
 
