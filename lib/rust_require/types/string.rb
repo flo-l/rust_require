@@ -47,7 +47,7 @@ module Rust
       end
 
       def not_implemented
-        raise NotImplementedError, '&str as rust output parameter is not supported, use String instead!'
+        raise NotImplementedError, '&mut str/&str as rust output parameter is not supported, use String instead!'
       end
 
       def c_output_type
@@ -71,8 +71,8 @@ module Rust
       def ruby_input_conversion(str)
         str.encode!(Encoding::UTF_8)
         len = str.bytesize
-        start = FFI::MemoryPointer.from_string(str).address
-        Rust::Slice.from(start, len)
+        start = FFI::MemoryPointer.from_string(str)
+        Rust::Slice.from(start.address, len)
       end
     end
   end

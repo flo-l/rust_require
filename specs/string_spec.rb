@@ -12,16 +12,18 @@ describe Rust do
         rust_require './specs/string.rs'
       end
 
+      strings = ["", "Hello, Ascii!", "ä#aüsfäö#asöä#¼³½¬³2"]
       t = Test.new
-      unicode_str = "ä#aüsfäö#asöä#¼³½¬³2"
 
-      expect(t.compare_string(unicode_str)).to eq true
-      expect(t.compare_mut_string(unicode_str)).to eq true
+      strings.each_with_index do |str, i|
+        expect(t.compare_string(    str,i)).to eq true
+        expect(t.compare_mut_string(str,i)).to eq true
 
-      expect(t.return_string).to eq unicode_str
-      expect(t.return_string.encoding).to eq Encoding::UTF_8
+        expect(t.return_string(i)).to eq str
+        expect(t.return_string(i).encoding).to eq Encoding::UTF_8
 
-      expect(t.pass_string_through(unicode_str)).to eq unicode_str
+        expect(t.pass_string_through(str)).to eq str
+      end
     end
   end
 end

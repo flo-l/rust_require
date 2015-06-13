@@ -1,4 +1,6 @@
-require_relative 'lib/rust_require/version.rb'
+module Rust
+  require_relative 'lib/rust_require/version.rb'
+end
 
 Gem::Specification.new do |s|
   s.name        = 'rust_require'
