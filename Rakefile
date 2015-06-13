@@ -44,5 +44,10 @@ task "new_patch" => [:patch, :build] do
   `gem publish rust_require-#{get_version.join('.')}.gem`
 end
 
+desc "Prints version number"
+task "v" do
+  puts get_version.join('.')
+end
+
 desc "Build the rust_require gem by default"
 task :default => :build_gem
