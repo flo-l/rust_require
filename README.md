@@ -33,10 +33,10 @@ Internally it makes heavy use of the awesome [```ffi gem```](https://github.com/
 
 - Supports rust macros
 - Supports free functions
-- Supports structs (currently no tuple structs)
+- Supports struct import
 - Imports the whole rust module tree
 
 # Supported types:
 
 - All primitive Integers
-- Currently no structs, but support is on the way
+- Currently no structs as types, but support is on the way

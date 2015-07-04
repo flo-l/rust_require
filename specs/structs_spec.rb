@@ -24,6 +24,23 @@ describe Rust do
       expect(struct[:b]).to eq -1
     end
 
+    it "should import tuple structs" do
+      class TestStructs
+        rust_require './specs/structs.rs'
+      end
+
+      expect(TestStructs.constants).to include(:TupleStruct)
+      expect(TestStructs::TupleStruct.superclass).to be FFI::Struct
+
+      struct = TestStructs::TupleStruct.new
+
+      expect{ struct[:"0"] =  1 }.not_to raise_error
+      expect{ struct[:"1"] = -1 }.not_to raise_error
+
+      expect(struct[:"0"]).to eq  1
+      expect(struct[:"1"]).to eq -1
+    end
+
     it "should import simple nested structs" do
       class TestNestedStructs
         rust_require './specs/structs.rs'
