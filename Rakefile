@@ -41,7 +41,7 @@ end
 
 desc "Increment patch version, build gem and publish to rubygems"
 task "new_patch" => [:patch, :build] do
-  `gem publish rust_require-#{get_version.join('.')}.gem`
+  `gem push rust_require-#{get_version.join('.')}.gem`
 end
 
 desc "Prints version number"
