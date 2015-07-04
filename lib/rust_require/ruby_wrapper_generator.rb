@@ -78,7 +78,7 @@ module Rust
           [name.to_sym, type.ffi_output_type]
         end.flatten
 
-        struct = Class.new(FFI::Struct)
+        struct = Class.new(Rust::Struct)
         struct.layout *fields
 
         mod.const_set(s['name'], struct)

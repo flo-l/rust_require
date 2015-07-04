@@ -13,7 +13,7 @@ describe Rust do
       end
 
       expect(TestStructs.constants).to include(:TestStruct)
-      expect(TestStructs::TestStruct.superclass).to be FFI::Struct
+      expect(TestStructs::TestStruct.superclass).to be Rust::Struct
 
       struct = TestStructs::TestStruct.new
 
@@ -30,15 +30,15 @@ describe Rust do
       end
 
       expect(TestStructs.constants).to include(:TupleStruct)
-      expect(TestStructs::TupleStruct.superclass).to be FFI::Struct
+      expect(TestStructs::TupleStruct.superclass).to be Rust::Struct
 
       struct = TestStructs::TupleStruct.new
 
-      expect{ struct[:"0"] =  1 }.not_to raise_error
-      expect{ struct[:"1"] = -1 }.not_to raise_error
+      expect{ struct[0] =  1 }.not_to raise_error
+      expect{ struct[1] = -1 }.not_to raise_error
 
-      expect(struct[:"0"]).to eq  1
-      expect(struct[:"1"]).to eq -1
+      expect(struct[0]).to eq  1
+      expect(struct[1]).to eq -1
     end
 
     it "should import simple nested structs" do
@@ -48,7 +48,7 @@ describe Rust do
 
       expect(TestNestedStructs.constants).to include(:Nested)
       expect(TestNestedStructs::Nested.constants).to include(:TestStruct)
-      expect(TestNestedStructs::Nested::TestStruct.superclass).to be FFI::Struct
+      expect(TestNestedStructs::Nested::TestStruct.superclass).to be Rust::Struct
 
       struct = TestNestedStructs::Nested::TestStruct.new
 
