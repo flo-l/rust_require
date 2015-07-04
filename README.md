@@ -6,7 +6,7 @@ This gem imports a rust file similar to how ```require``` imports a ruby file. I
 
 ```rust_require``` makes ruby to rust interop completely automatic and convenient (also fast and memory safe).
 
-Internally it makes heavy use of the awesome [```ffi```](https://github.com/ffi/ffi/) gem and should as a result work with all three major ruby implementations.
+Internally it makes heavy use of the awesome [```ffi gem```](https://github.com/ffi/ffi/) and should as a result work with all three major ruby implementations.
 
 ### Install
     gem install rust_require
@@ -38,4 +38,3 @@ Internally it makes heavy use of the awesome [```ffi```](https://github.com/ffi/
 # Supported types:
 
 - All primitive Integers
-- String and &str
