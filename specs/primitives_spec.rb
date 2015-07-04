@@ -8,11 +8,11 @@ describe Rust do
 
   describe "#rust_require(primitives)" do
     it "should support primitive rust types" do
-      class Test
+      class TestPrimitives
         rust_require './specs/primitives.rs'
       end
 
-      t = Test.new
+      t = TestPrimitives.new
       expect { t.should_not_be_visible }.to raise_error NoMethodError
 
       expect(t.test_nil).to eq nil

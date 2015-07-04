@@ -10,12 +10,12 @@ describe Rust do
     it "should support rust strings" do
       skip "deactivated for now, maybe reactivated later with explicit conversion"
     
-      class Test
+      class TestStrings
         rust_require './specs/string.rs'
       end
 
       strings = ["", "Hello, Ascii!", "ä#aüsfäö#asöä#¼³½¬³2"]
-      t = Test.new
+      t = TestStrings.new
 
       strings.each_with_index do |str, i|
         expect(t.compare_string(    str,i)).to eq true
