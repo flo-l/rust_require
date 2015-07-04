@@ -27,7 +27,7 @@ module Rust
       w << generate_fns(mod['fn_headers'], submod_string)
     end
 
-      # Generates wrapper fns for fn_headers (String)
+    # Generates wrapper fns for fn_headers (String)
     def generate_fns(fn_headers, submod_string)
       fn_headers.map do |fn|
         WrapperFn.new(submod_string + fn['name'], fn['inputs'], fn['output']).to_s

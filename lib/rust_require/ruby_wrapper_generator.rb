@@ -28,9 +28,10 @@ module Rust
       end
 
       attach_fns(rust_module['fn_headers'], mod, mod_string)
+      attach_structs(rust_module['structs'], mod)
     end
 
-    # attaches items via FFI to mod
+    # attaches fns via FFI to mod
     def attach_fns(fn_headers, mod, mod_string)
       # add ffi and the rust lib to mod
       mod.extend FFI::Library
@@ -66,6 +67,21 @@ module Rust
             output_type.ruby_output_conversion raw_output
           end
         end
+      end
+    end
+
+    # attaches structs via FFI to mod
+    def attach_structs(struct_defs, mod)
+      struct_defs.each do |s|
+        fields = s['fields'].map do |name, type|
+          type = Rust::Types.find_type(type)
+          [name.to_sym, type.ffi_output_type]
+        end.flatten
+
+        struct = Class.new(FFI::Struct)
+        struct.layout *fields
+
+        mod.const_set(s['name'], struct)
       end
     end
   end

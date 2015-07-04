@@ -8,18 +8,18 @@ describe Rust do
 
   describe "#rust_require(Modules)" do
     it "should import the module hierachy of rust files" do
-      class Test
+      class TestModules
         rust_require './specs/modules.rs'
         include SubModule::SubSubModule
       end
 
-      expect(Test.constants).to include(:SubModule)
-      expect(Test.constants).to include(:ExternalFileModule)
-      expect(Test.constants).to include(:ExternalDirModule)
-      expect(Test.constants).to_not include(:InvisibleModule)
-      expect(Test::SubModule.constants).to include(:SubSubModule)
+      expect(TestModules.constants).to include(:SubModule)
+      expect(TestModules.constants).to include(:ExternalFileModule)
+      expect(TestModules.constants).to include(:ExternalDirModule)
+      expect(TestModules.constants).to_not include(:InvisibleModule)
+      expect(TestModules::SubModule.constants).to include(:SubSubModule)
 
-      expect(Test.new.test).to eq nil
+      expect(TestModules.new.test).to eq nil
     end
   end
 end

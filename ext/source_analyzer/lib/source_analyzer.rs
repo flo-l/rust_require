@@ -18,7 +18,8 @@ use std::io::Write;
 
 // syntax elements
 use syntax::ast::{
-  Crate, Ident};
+    Crate, Ty_, Ident, TyPath, TyTup, Mutability, TyRptr};
+
 use syntax::parse::token;
 
 // lint things
@@ -29,6 +30,7 @@ use rustc::plugin::Registry;
 //Load mods
 mod fn_headers;
 mod modules;
+mod structs;
 
 use modules::Module;
 
@@ -39,6 +41,49 @@ use modules::Module;
 fn get_name_from_ident(ident: &Ident) -> String {
     let name_str = token::get_ident(*ident);
     String::from(&*name_str)
+}
+
+// this should return a string version of the supplied type,
+// like: "uint" or "collections::string::String"
+fn read_type(t: &Ty_) -> String {
+    match t {
+        &TyTup(ref v) if v.is_empty() => String::from("nil"),
+        &TyPath(_,ref p) => {
+            let mut state = true;
+
+            p.segments
+            .iter()
+            .map(|seg| get_name_from_ident(&seg.identifier))
+            .fold(String::new(), |mut a, b| {
+                if state {
+                    state = false;
+                    a.push_str(&b);
+                } else {
+                    a.push_str(&format!("::{}", b));
+                }
+                a
+            })
+        },
+        &TyRptr(lifetime,ref ty) => {
+            let mut s: String = "&".into();
+
+            if lifetime.is_some() {
+                panic!("references with lifetimes are not yet supported!");
+            }
+
+            match ty.mutbl {
+                Mutability::MutMutable   => s.push_str("mut "),
+                Mutability::MutImmutable => s.push_str(" "),
+            }
+
+            s.push_str(&read_type(&ty.ty.node));
+            s
+        }
+        t => {
+            println!("cannot handle type: {:?}", t);
+            unimplemented!();
+        }
+    }
 }
 
 // LINT DECLARATION AND REGISTRATION:
