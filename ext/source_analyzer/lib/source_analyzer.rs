@@ -38,7 +38,7 @@ use modules::Module;
 // This returns the name of an Ident as String
 fn get_name_from_ident(ident: &Ident) -> String {
     let name_str = token::get_ident(*ident);
-    String::from_str(&name_str)
+    String::from(&*name_str)
 }
 
 // LINT DECLARATION AND REGISTRATION:

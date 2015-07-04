@@ -41,7 +41,7 @@ impl FnHeader {
     // like: "uint" or "collections::string::String"
     fn read_type(t: &Ty_) -> String {
         match t {
-            &TyTup(ref v) if v.is_empty() => String::from_str("nil"),
+            &TyTup(ref v) if v.is_empty() => String::from("nil"),
             &TyPath(_,ref p) => {
                 let mut state = true;
 
