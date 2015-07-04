@@ -15,7 +15,9 @@ require_relative 'rust_require/ruby_wrapper_generator.rb'
 
 # Types
 require_relative 'rust_require/types/primitives.rb'
-require_relative 'rust_require/types/string.rb'
+
+# deactivated for now, maybe reactivated later with explicit conversion
+# require_relative 'rust_require/types/string.rb'
 
 class Module
   def rust_require(file)

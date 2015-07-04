@@ -1,3 +1,5 @@
+// deactivated for now, maybe reactivated later with explicit conversion
+
 static STRING0: &'static str = "";
 static STRING1: &'static str = "Hello, Ascii!";
 static STRING2: &'static str = "ä#aüsfäö#asöä#¼³½¬³2";

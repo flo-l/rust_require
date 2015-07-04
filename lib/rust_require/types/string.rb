@@ -1,3 +1,5 @@
+# deactivated for now, maybe reactivated later with explicit conversion
+
 module Rust
   module Types
     class String < Type
@@ -17,7 +19,19 @@ module Rust
         <<-CODE
         {
             let mut #{name} = #{name};
-            #{name}.shrink_to_fit();
+
+            // deallocate unused capacity if any
+            if #{name}.len() != #{name}.capacity() {
+                unsafe {
+                    let ptr = #{name}.as_mut_vec().as_mut_ptr();
+                    std::rt::heap::deallocate(
+                        ptr.offset(#{name}.len() as isize),
+                        #{name}.capacity() - #{name}.len(),
+                        std::mem::min_align_of::<u8>()
+                    );
+                }
+            }
+
             let tuple = (#{name}.as_ptr(), #{name}.len());
             std::mem::forget(#{name});
             tuple
@@ -72,6 +86,7 @@ module Rust
         str.encode!(Encoding::UTF_8)
         len = str.bytesize
         start = FFI::MemoryPointer.from_string(str)
+        start.autorelease = false # no GC
         Rust::Slice.from(start.address, len)
       end
     end

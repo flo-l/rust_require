@@ -8,6 +8,8 @@ describe Rust do
 
   describe "#rust_require(strings)" do
     it "should support rust strings" do
+      skip "deactivated for now, maybe reactivated later with explicit conversion"
+    
       class Test
         rust_require './specs/string.rs'
       end
